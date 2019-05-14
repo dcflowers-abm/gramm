@@ -145,7 +145,13 @@ end
 temp_aes=select_aes(obj.aes,obj.aes.subset);
 
 %Convert factor data to numeric
-if iscellstr(temp_aes.x)
+if iscell(temp_aes.x) && iscellstr(temp_aes.x{1})
+    obj.x_factor = true;
+    all_x = cellfun(@(x){x(:)}, temp_aes.x);
+    all_x = vertcat(all_x{:});
+    obj.x_ticks = unique_and_sort(all_x, obj.order_options.x);
+    temp_aes.x = cellfun(@(x){match(x,obj.x_ticks)}, temp_aes.x);
+elseif iscellstr(temp_aes.x)
     obj.x_factor=true;
     obj.x_ticks=unique_and_sort(temp_aes.x,obj.order_options.x);
     tempx=zeros(length(temp_aes.x),1);
@@ -1277,4 +1283,14 @@ if iscell(in)
 else
     out=min(in);
 end
+end
+
+function val = match(a,b)
+% Returns array of the same size as a of indices into b. Errors if elements
+% not found.
+
+[aisfound,val] = ismember(a,b);
+notfound = find(~aisfound,1);
+assert(isempty(notfound), 'Element %d was not found.', notfound)
+
 end
