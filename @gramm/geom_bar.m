@@ -20,6 +20,7 @@ my_addParameter(p,'dodge',0);
 my_addParameter(p,'FaceColor','auto');
 my_addParameter(p,'EdgeColor','k');
 my_addParameter(p,'LineWidth',[]);
+my_addParameter(p,'BaseValue',0);
 parse(p,varargin{:});
 
 obj.geom=vertcat(obj.geom,{@(dobj,dd)my_bar(dobj,dd,p.Results,p.Unmatched)});
@@ -114,7 +115,12 @@ else
     barleft=x-bar_width/2;
     barright=x+bar_width/2;
     xpatch=[barleft ; barright ; barright ; barleft];
-    ypatch=[zeros(1,length(y)) ; zeros(1,length(y)) ; y ; y];
+    if numel(params.BaseValue) == 1
+        ybase = repmat(params.BaseValue, 1, length(y));
+    else
+        ybase = params.BaseValue(:).';
+    end
+    ypatch=[ybase ; ybase ; y ; y];
     [xpatch,ypatch]=to_polar(obj,xpatch,ypatch);
     
 end
