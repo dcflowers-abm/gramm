@@ -37,12 +37,15 @@ dodge=params.dodge;
 x=comb(draw_data.x);
 y=comb(draw_data.y);
 
-if min(y)>0
-    obj.plot_lim.miny(obj.current_row,obj.current_column)=0;
+if params.stacked
+    miny = min([0; y]);
+    maxy = max([0; y]);
+else
+    miny = min([params.BaseValue; y]);
+    maxy = max([params.BaseValue; y]);
 end
-if max(y)<0
-    obj.plot_lim.maxy(obj.current_row,obj.current_column)=0;
-end
+obj.plot_lim.miny(obj.current_row,obj.current_column)=miny;
+obj.plot_lim.maxy(obj.current_row,obj.current_column)=maxy;
 
 % Convert to a row vector, the same as x(:).'
 x=shiftdim(x)';
